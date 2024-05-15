@@ -69,6 +69,10 @@ public class StreamConfigurationFragment extends Fragment {
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.CAMERA}, 9393);
         }
 
+        if (ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 9393);
+        }
+
         getActivity().setTitle(getActivity().getString(R.string.title_fragment_stream));
 
         final View view = inflater.inflate(R.layout.fragment_stream_configuration, container, false);

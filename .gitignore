@@ -21,3 +21,4 @@ build/
 *.iml
 
 *.DS_Store
+.vscode/

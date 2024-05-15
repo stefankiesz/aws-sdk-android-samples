@@ -13,6 +13,10 @@ import com.amazonaws.mobile.client.Callback;
 import com.amazonaws.mobile.client.SignInUIOptions;
 import com.amazonaws.mobile.client.UserStateDetails;
 
+import com.amazonaws.mobileconnectors.kinesisvideo.camera.CameraAdapter;
+import com.amazonaws.mobileconnectors.kinesisvideo.microphone.MicrophoneFramesSource;
+
+
 public class StartUpActivity extends AppCompatActivity {
     public static final String TAG = StartUpActivity.class.getSimpleName();
 
@@ -21,6 +25,18 @@ public class StartUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         final AWSMobileClient auth = AWSMobileClient.getInstance();
+
+        CameraAdapter.sayHi();
+
+        System.out.println("[TESTING] creating MicrophoneFramesSource");
+        MicrophoneFramesSource micSource = new MicrophoneFramesSource();
+        System.out.println("[TESTING] created MicrophoneFramesSource");
+
+        micSource.startAudioCapture();
+
+        System.out.println("[TESTING] called startAudioCapture");
+
+        
 
         if (auth.isSignedIn()) {
             ActivityUtils.startActivity(this, SimpleNavActivity.class);
