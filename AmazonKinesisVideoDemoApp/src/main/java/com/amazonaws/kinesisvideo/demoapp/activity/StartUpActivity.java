@@ -28,13 +28,13 @@ public class StartUpActivity extends AppCompatActivity {
 
         CameraAdapter.sayHi();
 
-        System.out.println("[TESTING] creating MicrophoneFramesSource");
-        MicrophoneFramesSource micSource = new MicrophoneFramesSource();
-        System.out.println("[TESTING] created MicrophoneFramesSource");
+        // System.out.println("[TESTING] creating MicrophoneFramesSource");
+        // MicrophoneFramesSource micSource = new MicrophoneFramesSource();
+        // System.out.println("[TESTING] created MicrophoneFramesSource");
 
-        micSource.startAudioCapture();
+        // micSource.startAudioCapture();
 
-        System.out.println("[TESTING] called startAudioCapture");
+        // System.out.println("[TESTING] called startAudioCapture");
 
         
 
