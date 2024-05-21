@@ -112,6 +112,13 @@
                     android:text="Mirror Preview"
                     android:checked="false" />
 
+                <CheckBox
+                    android:id="@+id/audio_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send Audio"
+                    android:checked="false" />
+
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="20dp"/>

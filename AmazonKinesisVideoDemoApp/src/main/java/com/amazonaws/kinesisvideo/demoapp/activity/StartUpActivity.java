@@ -14,7 +14,6 @@ import com.amazonaws.mobile.client.SignInUIOptions;
 import com.amazonaws.mobile.client.UserStateDetails;
 
 import com.amazonaws.mobileconnectors.kinesisvideo.camera.CameraAdapter;
-import com.amazonaws.mobileconnectors.kinesisvideo.microphone.MicrophoneFramesSource;
 
 
 public class StartUpActivity extends AppCompatActivity {
@@ -27,14 +26,6 @@ public class StartUpActivity extends AppCompatActivity {
         final AWSMobileClient auth = AWSMobileClient.getInstance();
 
         CameraAdapter.sayHi();
-
-        // System.out.println("[TESTING] creating MicrophoneFramesSource");
-        // MicrophoneFramesSource micSource = new MicrophoneFramesSource();
-        // System.out.println("[TESTING] created MicrophoneFramesSource");
-
-        // micSource.startAudioCapture();
-
-        // System.out.println("[TESTING] called startAudioCapture");
 
         
 

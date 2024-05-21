@@ -29,6 +29,8 @@ import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.kinesisvideo.client.KinesisVideoAndroidClientFactory;
 import com.amazonaws.mobileconnectors.kinesisvideo.data.MimeType;
 import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AndroidCameraMediaSourceConfiguration;
+import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AudioVideoMediaSourceConfiguration;
+
 
 import java.util.ArrayList;
 
@@ -46,7 +48,7 @@ public class StreamConfigurationFragment extends Fragment {
     private Button mStartStreamingButton;
     private EditText mStreamName;
     private KinesisVideoClient mKinesisVideoClient;
-    private CheckBox mAspectRatioCheckBox, mFillCheckBox, mMirrorCheckBox;
+    private CheckBox mAspectRatioCheckBox, mFillCheckBox, mMirrorCheckBox, mSendAudioCheckBox;
 
     private StringSpinnerWidget<CameraMediaSourceConfiguration> mCamerasDropdown;
     private StringSpinnerWidget<Size> mResolutionDropdown;
@@ -167,6 +169,7 @@ public class StreamConfigurationFragment extends Fragment {
         mAspectRatioCheckBox.setOnClickListener(onAspectRatioCheckBoxClick());
         mFillCheckBox = (CheckBox) view.findViewById(R.id.maximize_checkbox);
         mMirrorCheckBox = (CheckBox) view.findViewById(R.id.mirror_checkbox);
+        mSendAudioCheckBox = (CheckBox) view.findViewById(R.id.audio_checkbox);
     }
 
     private View.OnClickListener startStreamingActivityWhenClicked() {
@@ -217,7 +220,10 @@ public class StreamConfigurationFragment extends Fragment {
     }
 
     private AndroidCameraMediaSourceConfiguration getCurrentConfiguration() {
-        return new AndroidCameraMediaSourceConfiguration(
+        boolean sendAudio = mSendAudioCheckBox.isChecked();
+
+        if (sendAudio) {
+            return new AudioVideoMediaSourceConfiguration(
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
@@ -232,5 +238,22 @@ public class StreamConfigurationFragment extends Fragment {
                         .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
                         .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
                         .withIsAbsoluteTimecode(false));
+        } else {
+            return new AndroidCameraMediaSourceConfiguration(
+                AndroidCameraMediaSourceConfiguration.builder()
+                        .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
+                        .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
+                        .withIsEncoderHardwareAccelerated(
+                                mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
+                        .withFrameRate(FRAMERATE_20)
+                        .withRetentionPeriodInHours(RETENTION_PERIOD_48_HOURS)
+                        .withEncodingBitRate(BITRATE_384_KBPS)
+                        .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
+                        .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
+                        .withIsAbsoluteTimecode(false));
+        }
     }
 }
