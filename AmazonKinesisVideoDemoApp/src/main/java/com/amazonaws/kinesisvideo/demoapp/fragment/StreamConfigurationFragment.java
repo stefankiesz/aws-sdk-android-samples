@@ -227,8 +227,8 @@ public class StreamConfigurationFragment extends Fragment {
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
-                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
-                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getWidth())
                         .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
                         .withIsEncoderHardwareAccelerated(
                                 mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
@@ -243,8 +243,8 @@ public class StreamConfigurationFragment extends Fragment {
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
-                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
-                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getWidth())
                         .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
                         .withIsEncoderHardwareAccelerated(
                                 mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
