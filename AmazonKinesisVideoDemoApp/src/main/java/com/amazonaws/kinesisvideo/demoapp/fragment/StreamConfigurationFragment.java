@@ -29,6 +29,8 @@ import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.kinesisvideo.client.KinesisVideoAndroidClientFactory;
 import com.amazonaws.mobileconnectors.kinesisvideo.data.MimeType;
 import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AndroidCameraMediaSourceConfiguration;
+import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AudioVideoMediaSourceConfiguration;
+
 
 import java.util.ArrayList;
 
@@ -40,13 +42,15 @@ public class StreamConfigurationFragment extends Fragment {
     private static final String TAG = StreamConfigurationFragment.class.getSimpleName();
     private static final Size RESOLUTION_320x240 = new Size(320, 240);
     private static final int FRAMERATE_20 = 20;
+    private static final int FRAMERATE_30 = 30;
     private static final int BITRATE_384_KBPS = 384 * 1024;
+    private static final int BITRATE_4096_KBPS = 4 * 1024 * 1024;
     private static final int RETENTION_PERIOD_48_HOURS = 2 * 24;
 
     private Button mStartStreamingButton;
     private EditText mStreamName;
     private KinesisVideoClient mKinesisVideoClient;
-    private CheckBox mAspectRatioCheckBox, mFillCheckBox, mMirrorCheckBox;
+    private CheckBox mAspectRatioCheckBox, mFillCheckBox, mMirrorCheckBox, mSendAudioCheckBox;
 
     private StringSpinnerWidget<CameraMediaSourceConfiguration> mCamerasDropdown;
     private StringSpinnerWidget<Size> mResolutionDropdown;
@@ -67,6 +71,10 @@ public class StreamConfigurationFragment extends Fragment {
                              final Bundle savedInstanceState) {
         if (ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.CAMERA}, 9393);
+        }
+
+        if (ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 9393);
         }
 
         getActivity().setTitle(getActivity().getString(R.string.title_fragment_stream));
@@ -163,12 +171,14 @@ public class StreamConfigurationFragment extends Fragment {
         mAspectRatioCheckBox.setOnClickListener(onAspectRatioCheckBoxClick());
         mFillCheckBox = (CheckBox) view.findViewById(R.id.maximize_checkbox);
         mMirrorCheckBox = (CheckBox) view.findViewById(R.id.mirror_checkbox);
+        mSendAudioCheckBox = (CheckBox) view.findViewById(R.id.audio_checkbox);
     }
 
     private View.OnClickListener startStreamingActivityWhenClicked() {
         return new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                System.out.println("[TESTING] start streaming called");
                 startStreamingActivity();
             }
         };
@@ -213,7 +223,10 @@ public class StreamConfigurationFragment extends Fragment {
     }
 
     private AndroidCameraMediaSourceConfiguration getCurrentConfiguration() {
-        return new AndroidCameraMediaSourceConfiguration(
+        boolean sendAudio = mSendAudioCheckBox.isChecked();
+
+        if (sendAudio) {
+            return new AudioVideoMediaSourceConfiguration(
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
@@ -227,6 +240,23 @@ public class StreamConfigurationFragment extends Fragment {
                         .withEncodingBitRate(BITRATE_384_KBPS)
                         .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
                         .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
-                        .withIsAbsoluteTimecode(false));
+                        .withIsAbsoluteTimecode(true));
+        } else {
+            return new AndroidCameraMediaSourceConfiguration(
+                AndroidCameraMediaSourceConfiguration.builder()
+                        .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
+                        .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
+                        .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
+                        .withIsEncoderHardwareAccelerated(
+                                mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
+                        .withFrameRate(FRAMERATE_20)
+                        .withRetentionPeriodInHours(RETENTION_PERIOD_48_HOURS)
+                        .withEncodingBitRate(BITRATE_384_KBPS)
+                        .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
+                        .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
+                        .withIsAbsoluteTimecode(true));
+        }
     }
 }

@@ -22,9 +22,11 @@ import com.amazonaws.kinesisvideo.demoapp.R;
 import com.amazonaws.kinesisvideo.demoapp.activity.SimpleNavActivity;
 import com.amazonaws.kinesisvideo.client.KinesisVideoClient;
 import com.amazonaws.mobileconnectors.kinesisvideo.client.KinesisVideoAndroidClientFactory;
+import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AudioVideoMediaSource;
 import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AndroidCameraMediaSource;
 import com.amazonaws.mobileconnectors.kinesisvideo.mediasource.android.AndroidCameraMediaSourceConfiguration;
 import com.amazonaws.mobileconnectors.kinesisvideo.util.CameraHardwareCapabilitiesHelper;
+import com.amazonaws.kinesisvideo.internal.client.mediasource.MediaSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +47,8 @@ public class StreamingFragment extends Fragment implements TextureView.SurfaceTe
     private KinesisVideoClient mKinesisVideoClient;
     private String mStreamName;
     private AndroidCameraMediaSourceConfiguration mConfiguration;
-    private AndroidCameraMediaSource mCameraMediaSource;
+    // private AndroidCameraMediaSource mCameraMediaSource;
+    private MediaSource mMediaSource;
     private TextureView mTextureView;
     private float mRotation;
     private boolean mShouldMaintainAspectRatio;
@@ -94,10 +97,14 @@ public class StreamingFragment extends Fragment implements TextureView.SurfaceTe
                     KinesisVideoDemoApp.KINESIS_VIDEO_REGION,
                     KinesisVideoDemoApp.getCredentialsProvider());
 
-            mCameraMediaSource = (AndroidCameraMediaSource) mKinesisVideoClient
+                    mMediaSource = mKinesisVideoClient
                     .createMediaSource(mStreamName, mConfiguration);
 
-            mCameraMediaSource.setPreviewSurfaces(new Surface(previewTexture));
+                    if (mMediaSource instanceof AudioVideoMediaSource) {
+                        ((AudioVideoMediaSource) mMediaSource).setPreviewSurfaces(new Surface(previewTexture));
+                    } else if (mMediaSource instanceof AndroidCameraMediaSource) {
+                        ((AndroidCameraMediaSource) mMediaSource).setPreviewSurfaces(new Surface(previewTexture));
+                    }
 
             resumeStreaming();
         } catch (final KinesisVideoException e) {
@@ -136,11 +143,11 @@ public class StreamingFragment extends Fragment implements TextureView.SurfaceTe
 
     private void resumeStreaming() {
         try {
-            if (mCameraMediaSource == null) {
+            if (mMediaSource == null) {
                 return;
             }
 
-            mCameraMediaSource.start();
+            mMediaSource.start();
             Toast.makeText(getActivity(), "resumed streaming", Toast.LENGTH_SHORT).show();
             mStartStreamingButton.setText(getActivity().getText(R.string.stop_streaming));
         } catch (final KinesisVideoException e) {
@@ -151,11 +158,11 @@ public class StreamingFragment extends Fragment implements TextureView.SurfaceTe
 
     private void pauseStreaming() {
         try {
-            if (mCameraMediaSource == null) {
+            if (mMediaSource == null) {
                 return;
             }
 
-            mCameraMediaSource.stop();
+            mMediaSource.stop();
             Toast.makeText(getActivity(), "stopped streaming", Toast.LENGTH_SHORT).show();
             mStartStreamingButton.setText(getActivity().getText(R.string.start_streaming));
         } catch (final KinesisVideoException e) {
@@ -285,8 +292,8 @@ public class StreamingFragment extends Fragment implements TextureView.SurfaceTe
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
         try {
-            if (mCameraMediaSource != null)
-                mCameraMediaSource.stop();
+            if (mMediaSource != null)
+                mMediaSource.stop();
             if (mKinesisVideoClient != null)
                 mKinesisVideoClient.stopAllMediaSources();
             KinesisVideoAndroidClientFactory.freeKinesisVideoClient();
