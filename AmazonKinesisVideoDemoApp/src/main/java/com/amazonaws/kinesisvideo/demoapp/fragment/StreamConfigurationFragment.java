@@ -42,7 +42,9 @@ public class StreamConfigurationFragment extends Fragment {
     private static final String TAG = StreamConfigurationFragment.class.getSimpleName();
     private static final Size RESOLUTION_320x240 = new Size(320, 240);
     private static final int FRAMERATE_20 = 20;
+    private static final int FRAMERATE_30 = 30;
     private static final int BITRATE_384_KBPS = 384 * 1024;
+    private static final int BITRATE_4096_KBPS = 4 * 1024 * 1024;
     private static final int RETENTION_PERIOD_48_HOURS = 2 * 24;
 
     private Button mStartStreamingButton;
@@ -176,6 +178,7 @@ public class StreamConfigurationFragment extends Fragment {
         return new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                System.out.println("[TESTING] start streaming called");
                 startStreamingActivity();
             }
         };
@@ -227,8 +230,8 @@ public class StreamConfigurationFragment extends Fragment {
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
-                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getHeight())
-                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
                         .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
                         .withIsEncoderHardwareAccelerated(
                                 mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
@@ -237,14 +240,14 @@ public class StreamConfigurationFragment extends Fragment {
                         .withEncodingBitRate(BITRATE_384_KBPS)
                         .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
                         .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
-                        .withIsAbsoluteTimecode(false));
+                        .withIsAbsoluteTimecode(true));
         } else {
             return new AndroidCameraMediaSourceConfiguration(
                 AndroidCameraMediaSourceConfiguration.builder()
                         .withCameraId(mCamerasDropdown.getSelectedItem().getCameraId())
                         .withEncodingMimeType(mMimeTypeDropdown.getSelectedItem().getMimeType())
-                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getHeight())
-                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withHorizontalResolution(mResolutionDropdown.getSelectedItem().getWidth())
+                        .withVerticalResolution(mResolutionDropdown.getSelectedItem().getHeight())
                         .withCameraFacing(mCamerasDropdown.getSelectedItem().getCameraFacing())
                         .withIsEncoderHardwareAccelerated(
                                 mCamerasDropdown.getSelectedItem().isEndcoderHardwareAccelerated())
@@ -253,7 +256,7 @@ public class StreamConfigurationFragment extends Fragment {
                         .withEncodingBitRate(BITRATE_384_KBPS)
                         .withCameraOrientation(-mCamerasDropdown.getSelectedItem().getCameraOrientation())
                         .withNalAdaptationFlags(StreamInfo.NalAdaptationFlags.NAL_ADAPTATION_ANNEXB_CPD_AND_FRAME_NALS)
-                        .withIsAbsoluteTimecode(false));
+                        .withIsAbsoluteTimecode(true));
         }
     }
 }
